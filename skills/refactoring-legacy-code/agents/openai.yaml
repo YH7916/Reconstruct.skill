@@ -1,0 +1,4 @@
+interface:
+  display_name: "Legacy Refactor Guardrails"
+  short_description: "Route-first guardrails for risky legacy refactors"
+  default_prompt: "Use $refactoring-legacy-code to draft a safe refactor route, get approval, and execute one legacy wave with git checkpoints."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "GSD Legacy Refactor"
+  short_description: "Plan, confirm, and execute risky legacy refactors"
+  default_prompt: "Use $gsd-legacy-refactor to draft a refactor route, get user approval, and execute the legacy refactor in verified git-checkpointed waves."
