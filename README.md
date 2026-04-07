@@ -123,6 +123,20 @@ If your setup reads from an agent skill directory such as:
 
 copy the same folders there.
 
+### One-Command Install
+
+You can also install the suite with the bundled script:
+
+```text
+python scripts/install_skills.py --force
+```
+
+Useful flags:
+
+- `--dest <path>` to install somewhere custom
+- `--mode link` to symlink instead of copy
+- `--dry-run` to preview the destination
+
 ## Quick Start
 
 ### Option A: Plan And Execute A Risky Refactor
@@ -191,6 +205,11 @@ skills/
     workflows/legacy-refactor.md
     references/artifact-contract.md
     templates/
+scripts/
+  install_skills.py
+docs/
+  demo-cases.md
+  github-launch.md
 ```
 
 ## What This Repo Is Not
@@ -250,3 +269,15 @@ If you try the suite on a real codebase, the most useful feedback is:
 - what it got wrong
 - where the first safe boundary should have been smaller
 - where the route was too conservative or not conservative enough
+
+## Release Assets
+
+This repo also includes launch-ready materials:
+
+- [docs/demo-cases.md](docs/demo-cases.md)
+- [docs/github-launch.md](docs/github-launch.md)
+- [LICENSE](LICENSE)
+
+## License
+
+MIT. See [LICENSE](LICENSE).
