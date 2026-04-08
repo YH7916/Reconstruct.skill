@@ -5,9 +5,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YH7916/Reconstruct.skill/stargazers"><img src="https://img.shields.io/github/stars/YH7916/Reconstruct.skill?style=for-the-badge&label=GitHub%20Stars" alt="GitHub Stars" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/YH7916/Reconstruct.skill?style=for-the-badge&label=MIT%20License" alt="MIT License" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/commits/main"><img src="https://img.shields.io/github/last-commit/YH7916/Reconstruct.skill?style=for-the-badge&label=Last%20Update" alt="Last Update" /></a>
+  <img src="https://img.shields.io/badge/Route--First-Approval%20Before%20Edits-0F766E?style=for-the-badge" alt="Route-First" />
+  <img src="https://img.shields.io/badge/Multi--Platform-Codex%20%7C%20Claude%20%7C%20Agents-1D4ED8?style=for-the-badge" alt="Multi-Platform" />
+  <img src="https://img.shields.io/badge/Git%20Checkpoints-Per--Wave%20Safety-F59E0B?style=for-the-badge" alt="Git Checkpoints" />
+  <img src="https://img.shields.io/badge/Planning%20Artifacts-.planning%20First-7C3AED?style=for-the-badge" alt="Planning Artifacts" />
 </p>
 
 <p align="center">
