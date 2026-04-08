@@ -13,8 +13,9 @@ description: Use when a risky legacy refactor needs route confirmation, staged e
 
 ## B. AskUserQuestion -> request_user_input Mapping
 - Map GSD-style `AskUserQuestion` calls to Codex `request_user_input` when available.
-- If structured input is unavailable, ask the question plainly and continue with a conservative default.
-- Default conservatively: choose the smaller scope, the safer mode, and planning-only output.
+- If structured input is unavailable, ask the question plainly.
+- If explicit approval is missing, stop after planning.
+- Default conservatively only for planning details such as scope and risk, never for approval.
 
 ## C. Task() -> spawn_agent Mapping
 - If the host platform supports subagents, `Task(subagent_type="X", prompt="Y")` maps to `spawn_agent(agent_type="X", message="Y")`.
@@ -44,6 +45,7 @@ Defaults:
 - Execution mode: route-first, then execute after confirmation
 - Source edits: forbidden before route approval
 - Git mode: branch plus per-wave checkpoints
+- Approval semantics: full-route approval unless the user narrows it
 </context>
 
 <process>
@@ -52,6 +54,13 @@ Execute `@./workflows/legacy-refactor.md` end-to-end.
 Before route approval, only write `.planning/refactors/<slug>/` artifacts.
 After route approval, execute the approved waves and use git checkpoints throughout.
 </process>
+
+<approval_contract>
+- No source edits without explicit route approval
+- Ambiguous responses are not approval
+- Approval applies to the exact route shown
+- A changed route requires re-approval
+</approval_contract>
 
 <offer_next>
 Output this markdown directly:
@@ -90,6 +99,7 @@ Review artifacts:
 - Safety net assessed
 - Mode chosen conservatively
 - Route shown to user before edits
+- Approval captured explicitly before edits
 - Planning artifacts written
 - Git branch or checkpoint strategy recorded
 - Completed waves verified and committed

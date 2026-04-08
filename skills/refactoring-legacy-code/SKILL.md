@@ -43,9 +43,22 @@ Before editing source files:
 - Name the first wave boundary explicitly
 
 After approval:
-- Execute the approved wave without pausing at every tiny step
-- Keep going until the wave is verified and checkpointed
-- Stop only when a stated stop condition, boundary spill, or verification failure appears
+- Treat approval as permission for the exact route that was shown
+- If the approved route contains multiple waves, execute them in order unless the user limited approval to fewer waves
+- Keep moving until the approved route completes, a stop condition fires, or verification fails
+
+Without explicit approval:
+- Do not edit source files
+- Stop after planning and route presentation
+
+## Approval Semantics
+
+Use these rules exactly:
+- `Yes`, `approved`, or equivalent explicit confirmation unlocks execution
+- Silence, ambiguity, or partial acknowledgment does not unlock execution
+- If the user says `start with wave 1`, approval covers only wave 1
+- If the user approves the full route, approval covers all planned waves in the route
+- Any material route change requires renewed approval
 
 ## Required Outputs
 
@@ -208,7 +221,8 @@ Stopping is success when the alternative is a blind rewrite.
 4. Choose `untangle-first` or `refactor-wave`.
 5. Define one safe boundary and one wave only.
 6. Refactor inside that wave.
-7. Verify, checkpoint with git, summarize deltas, and recommend the next wave.
+7. Verify, checkpoint with git, and continue into the next approved wave if one exists.
+8. Summarize deltas and any remaining risk at the end of the approved route.
 
 ## References
 

@@ -3,6 +3,7 @@
 ## Approval
 
 - Route approved by user: `yes|no`
+- Approval scope: `full-route|wave-1-only|none`
 - Approval summary: `<what was approved>`
 
 ## Git Baseline

@@ -24,8 +24,15 @@ Parse `{{LEGACY_ARGS}}`:
 Set defaults:
 - `goal = reduce coupling and make future change safer`
 - `scope = module`
-- `slug = kebab-case(target)`
+- `slug = normalized(target)` where normalization means:
+  - lowercase
+  - replace `/`, `\`, spaces, `.`, `_`, and `:` with `-`
+  - remove characters outside `[a-z0-9-]`
+  - collapse repeated hyphens
+  - trim leading and trailing hyphens
+  - truncate to 48 characters
 - `artifact_dir = .planning/refactors/<slug>`
+- `route_branch = codex/legacy-refactor-<slug>`
 
 Create `artifact_dir` if it does not exist.
 
@@ -135,18 +142,29 @@ Summarize:
 
 Ask the user to confirm the route before any source edits.
 
+Approval semantics:
+- explicit `yes`, `approved`, or equivalent = approved
+- explicit `wave 1 only` = approved for wave 1 only
+- anything else = not approved
+
 If the user does not approve:
 - revise artifacts
 - do not edit source files
+- stop after planning unless the user requests revisions
 
 If the user approves:
 - update `07-EXECUTION-LOG.md` approval to `yes`
+- record approval scope as `full-route` or `wave-1-only`
 - continue to step 8
 
 ## 8. Prepare Git Baseline
 
 If the repo is already a git repository:
-- prefer a dedicated branch such as `codex/legacy-refactor-<slug>`
+- run `git status --short`
+- if unrelated dirty files exist outside the approved boundary, stop and resolve scope before editing
+- run `git rev-parse --short HEAD`
+- prefer `git switch -c <route_branch>` if the branch does not exist
+- otherwise run `git switch <route_branch>`
 - if branch creation is inappropriate for the repo, record the current branch and baseline commit instead
 
 If the repo is not a git repository:
@@ -161,12 +179,18 @@ Record in `07-EXECUTION-LOG.md`:
 
 Execute approved waves in order.
 
+If approval scope is `wave-1-only`, execute only wave 1 and then stop.
+
 For each wave:
 - re-read the wave boundary and forbidden changes
 - apply the core rules from `$refactoring-legacy-code`
 - if the boundary expands, stop and replan
 - run the verification gate
-- if verification passes, commit that wave and update `07-EXECUTION-LOG.md`
+- if verification passes:
+  - run `git add -- <boundary files>`
+  - run `git status --short`
+  - run `git commit -m "<wave-scoped message>"`
+  - update `07-EXECUTION-LOG.md`
 - if verification fails, stop, record failure, and do not continue to the next wave
 
 Continue until:

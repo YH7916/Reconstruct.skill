@@ -58,6 +58,7 @@ Must capture:
 
 Must capture:
 - Approval checkpoint
+- Approval scope
 - Branch name or baseline checkpoint
 - Each executed wave
 - Verification result for each wave
