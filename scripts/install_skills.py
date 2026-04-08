@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the skill suite into a Codex-compatible skills directory."""
+"""Install the skill suite into a skills directory for common agent hosts."""
 
 from __future__ import annotations
 
@@ -13,11 +13,17 @@ from pathlib import Path
 SKILLS = ("refactoring-legacy-code", "gsd-legacy-refactor")
 
 
-def default_destination() -> Path:
-    codex_home = os.environ.get("CODEX_HOME")
-    if codex_home:
-        return Path(codex_home) / "skills"
-    return Path.home() / ".codex" / "skills"
+def destination_for_platform(platform: str) -> Path:
+    if platform == "codex":
+        codex_home = os.environ.get("CODEX_HOME")
+        if codex_home:
+            return Path(codex_home) / "skills"
+        return Path.home() / ".codex" / "skills"
+    if platform == "claude":
+        return Path.home() / ".claude" / "skills"
+    if platform == "agents":
+        return Path.cwd() / ".agents" / "skills"
+    raise ValueError(f"Unsupported platform: {platform}")
 
 
 def copy_tree(src: Path, dest: Path, force: bool) -> None:
@@ -63,10 +69,18 @@ def install(repo_root: Path, destination: Path, mode: str, force: bool, dry_run:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Install the Reconstruct skill suite.")
     parser.add_argument(
+        "--platform",
+        choices=("codex", "claude", "agents", "custom"),
+        default="codex",
+        help=(
+            "Choose a preset destination: codex -> $CODEX_HOME/skills or ~/.codex/skills, "
+            "claude -> ~/.claude/skills, agents -> ./.agents/skills, custom -> requires --dest."
+        ),
+    )
+    parser.add_argument(
         "--dest",
         type=Path,
-        default=default_destination(),
-        help="Destination skill directory. Defaults to $CODEX_HOME/skills or ~/.codex/skills.",
+        help="Destination skill directory. Overrides --platform when provided.",
     )
     parser.add_argument(
         "--mode",
@@ -90,10 +104,18 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent.parent
+    if args.dest is not None:
+        destination = args.dest.expanduser().resolve()
+    elif args.platform == "custom":
+        print("[ERROR] --platform custom requires --dest", file=sys.stderr)
+        return 1
+    else:
+        destination = destination_for_platform(args.platform).expanduser().resolve()
+
     try:
         installed = install(
             repo_root=repo_root,
-            destination=args.dest.expanduser().resolve(),
+            destination=destination,
             mode=args.mode,
             force=args.force,
             dry_run=args.dry_run,
@@ -103,7 +125,7 @@ def main() -> int:
         return 1
 
     action = "Would install" if args.dry_run else "Installed"
-    print(f"{action} {len(installed)} skills:")
+    print(f"{action} {len(installed)} skills for {args.platform}:")
     for src, dest in installed:
         print(f"- {src.name}: {dest}")
     return 0

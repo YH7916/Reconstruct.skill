@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YH7916/Reconstruct.skill/stargazers"><img src="https://img.shields.io/github/stars/YH7916/Reconstruct.skill?style=flat-square" alt="GitHub stars" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/YH7916/Reconstruct.skill?style=flat-square" alt="License" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/commits/main"><img src="https://img.shields.io/github/last-commit/YH7916/Reconstruct.skill?style=flat-square" alt="Last commit" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/stargazers"><img src="https://img.shields.io/github/stars/YH7916/Reconstruct.skill?style=for-the-badge&label=GitHub%20Stars" alt="GitHub Stars" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/YH7916/Reconstruct.skill?style=for-the-badge&label=MIT%20License" alt="MIT License" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/commits/main"><img src="https://img.shields.io/github/last-commit/YH7916/Reconstruct.skill?style=for-the-badge&label=Last%20Update" alt="Last Update" /></a>
 </p>
 
 <p align="center">
@@ -18,7 +18,7 @@
   <a href="README.md">中文 README</a>
 </p>
 
-## What It Is
+## What Problem It Solves
 
 `屎山重构.skill` is a two-layer skill suite for risky legacy refactors:
 
@@ -27,21 +27,14 @@
 | `refactoring-legacy-code` | The execution skill. It maps blast radius, locks behavior, picks a safe boundary, and refactors in bounded waves. |
 | `gsd-legacy-refactor` | The orchestration skill. It inspects the target, writes `.planning/refactors/<slug>/` artifacts, asks for route approval, then executes with git checkpoints. |
 
-This README structure takes cues from high-star skill/tool repos such as [anthropics/skills](https://github.com/anthropics/skills) and [daymade/claude-code-skills](https://github.com/daymade/claude-code-skills): lead with value, show install fast, make the workflow concrete, then provide deeper docs.
-
-## Why It Exists
-
-Most AI refactor helpers break down exactly where legacy systems hurt most:
+This suite is built for the cases where AI refactors usually go wrong:
 
 - dense dependency graphs
 - hidden side effects
 - shared mutable state
 - modules that break three things when you touch one
 
-This project is opinionated about that failure mode.
-
-It does not assume the answer is "rewrite everything."  
-It assumes the safer sequence is:
+The default sequence is:
 
 1. map the current shape
 2. lock behavior
@@ -50,34 +43,39 @@ It assumes the safer sequence is:
 5. execute only after approval
 6. checkpoint each verified wave with git
 
-## Why It Feels Different
+## Platform Fit
 
-- `Route first, edit second`: no structural edits before an explicit approved route.
-- `Automatic downgrade for high risk`: tangled code falls back to `untangle-first`.
-- `Git is part of execution`: baseline checkpoint, branch strategy, per-wave commits.
-- `Planning artifacts are first-class`: every risky refactor gets a documented handoff package.
-- `Bilingual trigger coverage`: descriptions include both English and Chinese trigger phrases.
+| Host | How to use it |
+|------|---------------|
+| Codex | Install into `$CODEX_HOME/skills` or `~/.codex/skills`, then invoke by skill name or natural language |
+| Claude Code | Install into `~/.claude/skills`, then ask the agent to use the skill |
+| Agent Skills compatible clients | Install into `./.agents/skills` or the client's configured skill directory |
+| Other agents / runners | Load the target `SKILL.md` plus its neighboring `references/`, `templates/`, and `workflows/` folders |
+
+This project is not meant to be Codex-only. The content is ordinary `SKILL.md`-based skill folders, so any host that supports Agent Skills, personal skill directories, or prompt-loaded skill packs can use it.
 
 ## Quick Start
 
 ### Install
 
-Copy both skill folders into your skill directory:
+#### Option 1: Use the installer script
 
 ```text
-$CODEX_HOME/skills
+python scripts/install_skills.py --platform codex --force
 ```
 
-Or, if `CODEX_HOME` is unset:
-
 ```text
-~/.codex/skills
+python scripts/install_skills.py --platform claude --force
 ```
 
-You can also use the bundled installer:
+```text
+python scripts/install_skills.py --platform agents --force
+```
+
+For a custom destination:
 
 ```text
-python scripts/install_skills.py --force
+python scripts/install_skills.py --platform custom --dest /path/to/skills --force
 ```
 
 Useful flags:
@@ -86,30 +84,59 @@ Useful flags:
 - `--mode link` creates symlinks instead of copies
 - `--dry-run` previews the destination
 
-### Run A Full Risky Refactor Flow
+#### Option 2: Copy the folders manually
+
+Copy these directories into your host's skill directory:
+
+```text
+skills/refactoring-legacy-code
+skills/gsd-legacy-refactor
+```
+
+Common destinations:
+
+```text
+Codex:        $CODEX_HOME/skills or ~/.codex/skills
+Claude Code:  ~/.claude/skills
+Repo local:   ./.agents/skills
+```
+
+### How To Invoke It
+
+#### Command-style hosts
 
 ```text
 $gsd-legacy-refactor src/auth --goal "split auth orchestration from token storage"
 ```
 
-What happens:
-
-1. inspect the target
-2. write `.planning/refactors/<slug>/`
-3. classify risk and choose mode
-4. show the route for approval
-5. execute approved waves
-6. checkpoint progress with git
-
-### Run A Single Guardrailed Wave
-
 ```text
 $refactoring-legacy-code src/reporting/legacy_parser.py
 ```
 
-Use this when you already know the boundary and want execution guardrails.
+#### Natural-language hosts
 
-## How It Thinks
+```text
+Use gsd-legacy-refactor on src/auth.
+Plan first, write the .planning artifacts, show me the route, and wait for approval before editing code.
+```
+
+```text
+Use refactoring-legacy-code on src/reporting/legacy_parser.py.
+If the blast radius is high, switch to untangle-first and stop after presenting the safe route.
+```
+
+#### Hosts without automatic skill discovery
+
+Provide the target `SKILL.md` file directly to the agent and keep the neighboring resource folders intact:
+
+```text
+skills/refactoring-legacy-code/SKILL.md
+skills/gsd-legacy-refactor/SKILL.md
+```
+
+If your host can follow relative file references, the original folder layout is enough. If it cannot, pass the relevant `references/`, `templates/`, and `workflows/` files alongside the main skill file.
+
+## How It Works
 
 The suite uses two execution modes:
 
@@ -124,6 +151,15 @@ It always prefers:
 - stable external behavior
 - compatibility seams over blanket rewrites
 - verified progress over heroic big-bang changes
+
+## What A Typical Run Looks Like
+
+1. inspect the target area, entrypoints, dependencies, and side effects
+2. write `.planning/refactors/<slug>/`
+3. classify risk and choose `untangle-first` or `refactor-wave`
+4. show the route for approval
+5. execute only the explicitly approved waves
+6. verify and checkpoint each completed wave with git
 
 ## Artifact Output
 
@@ -151,28 +187,6 @@ Safe Boundary: adapter seam around token store
 Verification Gate: targeted tests + smoke checks + rollback point
 ```
 
-## Repo Layout
-
-```text
-skills/
-  refactoring-legacy-code/
-    SKILL.md
-    agents/openai.yaml
-    references/
-  gsd-legacy-refactor/
-    SKILL.md
-    agents/openai.yaml
-    workflows/legacy-refactor.md
-    references/artifact-contract.md
-    templates/
-scripts/
-  install_skills.py
-docs/
-  assets/social-preview-zh.png
-  demo-cases.md
-  github-launch.md
-```
-
 ## Docs
 
 - [Demo cases](docs/demo-cases.md)
@@ -186,6 +200,20 @@ docs/
 - not a generic cleanup prompt
 - not for tiny isolated bug fixes
 - not a promise that AI can skip tests, verification, or git hygiene
+
+## Repo Layout
+
+```text
+skills/
+  refactoring-legacy-code/
+  gsd-legacy-refactor/
+scripts/
+  install_skills.py
+docs/
+  assets/social-preview-zh.png
+  demo-cases.md
+  github-launch.md
+```
 
 ## Roadmap
 

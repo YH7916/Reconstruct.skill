@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/YH7916/Reconstruct.skill/stargazers"><img src="https://img.shields.io/github/stars/YH7916/Reconstruct.skill?style=flat-square" alt="GitHub stars" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/YH7916/Reconstruct.skill?style=flat-square" alt="License" /></a>
-  <a href="https://github.com/YH7916/Reconstruct.skill/commits/main"><img src="https://img.shields.io/github/last-commit/YH7916/Reconstruct.skill?style=flat-square" alt="Last commit" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/stargazers"><img src="https://img.shields.io/github/stars/YH7916/Reconstruct.skill?style=for-the-badge&label=GitHub%20Stars" alt="GitHub Stars" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/blob/main/LICENSE"><img src="https://img.shields.io/github/license/YH7916/Reconstruct.skill?style=for-the-badge&label=MIT%20License" alt="MIT License" /></a>
+  <a href="https://github.com/YH7916/Reconstruct.skill/commits/main"><img src="https://img.shields.io/github/last-commit/YH7916/Reconstruct.skill?style=for-the-badge&label=Last%20Update" alt="Last Update" /></a>
 </p>
 
 <p align="center">
@@ -18,7 +18,7 @@
   <a href="README.en.md">English README</a>
 </p>
 
-## 这是什么
+## 它解决什么问题
 
 `屎山重构.skill` 是一套双层 skill：
 
@@ -27,20 +27,14 @@
 | `refactoring-legacy-code` | 执行层。负责评估爆炸半径、冻结行为、划定安全边界，并按波次重构。 |
 | `gsd-legacy-refactor` | 编排层。负责扫描目标、生成 `.planning/refactors/<slug>/` 工件、给用户确认路线，然后按 git checkpoint 执行。 |
 
-这个 README 的组织方式参考了高 star skill / tooling 项目常见的首页模式，比如 [anthropics/skills](https://github.com/anthropics/skills) 和 [daymade/claude-code-skills](https://github.com/daymade/claude-code-skills)：先讲价值，再给安装和上手，再落到更细的说明。
-
-## 为什么做它
-
-大部分 AI 重构工具最容易翻车的地方，恰恰就是遗留系统最痛的地方：
+这套 skill 专门处理最容易把 AI 重构搞崩的场景：
 
 - 依赖图过密
 - 隐式副作用太多
 - 共享可变状态
 - 改一处崩三处的核心模块
 
-这个项目就是针对这个失败模式设计的。
-
-它不假设答案是“全部重写”，而是假设更安全的顺序应该是：
+默认工作方式不是“先改再说”，而是：
 
 1. 先把当前结构摸清
 2. 先锁定行为
@@ -49,34 +43,39 @@
 5. 确认后再执行
 6. 每个验证通过的波次都用 git checkpoint 固化
 
-## 它和普通重构提示词有什么不同
+## 适用平台
 
-- `先路线，后改代码`：没有明确批准前，不允许做结构性修改。
-- `高风险自动降级`：耦合太重时自动切到 `untangle-first`。
-- `把 git 当执行系统的一部分`：baseline、分支、每波 commit 都是规则，不是善后。
-- `规划工件是第一公民`：每次高风险重构都要留下可交接的 `.planning` 包。
-- `中英双语触发词`：英文和中文场景都更容易被 skill 发现。
+| 平台 | 使用方式 |
+|------|----------|
+| Codex | 放到 `$CODEX_HOME/skills` 或 `~/.codex/skills`，用 skill 名或自然语言调用 |
+| Claude Code | 放到 `~/.claude/skills`，让 agent 读取并按 `SKILL.md` 执行 |
+| Agent Skills 兼容客户端 | 放到项目内 `.agents/skills/` 或客户端约定目录 |
+| 其他 agent / runner | 直接加载对应 `SKILL.md`，并保留同目录下的 `references/`、`templates/`、`workflows/` |
+
+只要宿主支持 `SKILL.md` 风格技能，或者至少支持“把一整个技能目录作为工作说明加载进来”，这套 skill 就能工作。它不是只给 Codex 写的，只是仓库里默认同时照顾了 Codex 的调用习惯。
 
 ## 快速开始
 
 ### 安装
 
-把两个 skill 文件夹复制到你的 skill 目录：
+#### 方式一：用安装脚本
 
 ```text
-$CODEX_HOME/skills
+python scripts/install_skills.py --platform codex --force
 ```
 
-如果没有设置 `CODEX_HOME`，就放到：
-
 ```text
-~/.codex/skills
+python scripts/install_skills.py --platform claude --force
 ```
 
-也可以直接用安装脚本：
+```text
+python scripts/install_skills.py --platform agents --force
+```
+
+如果你要装到自定义位置：
 
 ```text
-python scripts/install_skills.py --force
+python scripts/install_skills.py --platform custom --dest /path/to/skills --force
 ```
 
 常用参数：
@@ -85,30 +84,59 @@ python scripts/install_skills.py --force
 - `--mode link` 用软链接代替复制
 - `--dry-run` 只预览不写入
 
-### 跑完整高风险重构流程
+#### 方式二：手动复制
+
+把这两个目录复制到你的 skill 目录里：
+
+```text
+skills/refactoring-legacy-code
+skills/gsd-legacy-refactor
+```
+
+常见目标位置：
+
+```text
+Codex:        $CODEX_HOME/skills 或 ~/.codex/skills
+Claude Code:  ~/.claude/skills
+Repo local:   ./.agents/skills
+```
+
+### 怎么调用
+
+#### 命令式宿主
 
 ```text
 $gsd-legacy-refactor src/auth --goal "split auth orchestration from token storage"
 ```
 
-执行流程：
-
-1. 扫描目标
-2. 生成 `.planning/refactors/<slug>/`
-3. 评估风险并选择模式
-4. 把路线展示给用户确认
-5. 执行已批准的波次
-6. 用 git 做 checkpoint
-
-### 直接执行单个受保护波次
-
 ```text
 $refactoring-legacy-code src/reporting/legacy_parser.py
 ```
 
-适合你已经知道边界，只想要执行护栏的时候。
+#### 自然语言宿主
 
-## 它的思考方式
+```text
+Use gsd-legacy-refactor on src/auth.
+Plan first, write the .planning artifacts, show me the route, and wait for approval before editing code.
+```
+
+```text
+Use refactoring-legacy-code on src/reporting/legacy_parser.py.
+If the blast radius is high, switch to untangle-first and stop after presenting the safe route.
+```
+
+#### 不支持技能自动发现的 agent
+
+把对应目录下的 `SKILL.md` 直接提供给 agent，同时保留相邻资源目录：
+
+```text
+skills/refactoring-legacy-code/SKILL.md
+skills/gsd-legacy-refactor/SKILL.md
+```
+
+如果你的 agent 支持按需读取相对路径资源，保留原目录结构即可；如果不支持，至少要把 `references/`、`templates/`、`workflows/` 一并提供。
+
+## 它怎么工作
 
 整个 suite 只允许两种模式：
 
@@ -124,7 +152,16 @@ $refactoring-legacy-code src/reporting/legacy_parser.py
 - 先加兼容层再动内部结构
 - 先要可验证进展，不要英雄式大改
 
-## 产物输出
+## 一次典型运行会发生什么
+
+1. 扫描目标区域、入口、依赖和副作用
+2. 写出 `.planning/refactors/<slug>/`
+3. 评估风险并选择 `untangle-first` 或 `refactor-wave`
+4. 把路线展示给用户确认
+5. 只执行明确批准的波次
+6. 每个完成波次都做验证和 git checkpoint
+
+## 产物
 
 `$gsd-legacy-refactor` 会写出：
 
@@ -150,28 +187,6 @@ Safe Boundary: adapter seam around token store
 Verification Gate: targeted tests + smoke checks + rollback point
 ```
 
-## 仓库结构
-
-```text
-skills/
-  refactoring-legacy-code/
-    SKILL.md
-    agents/openai.yaml
-    references/
-  gsd-legacy-refactor/
-    SKILL.md
-    agents/openai.yaml
-    workflows/legacy-refactor.md
-    references/artifact-contract.md
-    templates/
-scripts/
-  install_skills.py
-docs/
-  assets/social-preview-zh.png
-  demo-cases.md
-  github-launch.md
-```
-
 ## 相关文档
 
 - [Demo 用例](docs/demo-cases.md)
@@ -185,6 +200,20 @@ docs/
 - 不是泛泛的代码整理提示词
 - 不是给小型独立 bugfix 用的
 - 不是“AI 可以跳过测试和验证”的借口
+
+## 仓库内容
+
+```text
+skills/
+  refactoring-legacy-code/
+  gsd-legacy-refactor/
+scripts/
+  install_skills.py
+docs/
+  assets/social-preview-zh.png
+  demo-cases.md
+  github-launch.md
+```
 
 ## 路线图
 
