@@ -14,7 +14,7 @@ It can serve both as:
 
 ## Suggested Repo Name
 
-`reconstruct-skill-suite`
+`屎山重构.skill`
 
 ## Suggested Tagline
 
