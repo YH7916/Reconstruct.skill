@@ -2,6 +2,8 @@
 
 Route-first AI skills for refactoring legacy code without blowing up tightly coupled systems.
 
+![屎山重构.skill showcase](docs/assets/social-preview-zh.png)
+
 This repo ships two complementary skills:
 
 | Skill | Role |
@@ -208,6 +210,7 @@ skills/
 scripts/
   install_skills.py
 docs/
+  assets/social-preview-zh.png
   demo-cases.md
   github-launch.md
 ```

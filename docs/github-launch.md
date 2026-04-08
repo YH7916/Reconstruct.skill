@@ -2,6 +2,16 @@
 
 Use this file when publishing the repo, writing the About box, or generating social preview images.
 
+## Current Image Asset
+
+Use a single shared showcase image for now:
+
+- `docs/assets/social-preview-zh.png`
+
+It can serve both as:
+- GitHub social preview
+- README hero image
+
 ## Suggested Repo Name
 
 `reconstruct-skill-suite`
