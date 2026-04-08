@@ -11,203 +11,14 @@
 </p>
 
 <p align="center">
-  Route-first AI skills for refactoring dangerous legacy code without blowing up tightly coupled systems.
+  面向危险遗留代码的路线优先重构 AI skill 套件。
 </p>
 
 <p align="center">
-  <a href="#english">English</a> | <a href="#中文">中文</a>
+  <a href="README.en.md">English README</a>
 </p>
 
-## English
-
-### What It Is
-
-`屎山重构.skill` is a two-layer skill suite for risky legacy refactors:
-
-| Skill | Role |
-|------|------|
-| `refactoring-legacy-code` | The execution skill. It maps blast radius, locks behavior, picks a safe boundary, and refactors in bounded waves. |
-| `gsd-legacy-refactor` | The orchestration skill. It inspects the target, writes `.planning/refactors/<slug>/` artifacts, asks for route approval, then executes with git checkpoints. |
-
-This README structure takes cues from high-star skill/tool repos such as [anthropics/skills](https://github.com/anthropics/skills) and [daymade/claude-code-skills](https://github.com/daymade/claude-code-skills): lead with value, show install fast, make the workflow concrete, then provide deeper docs.
-
-### Why It Exists
-
-Most AI refactor helpers break down exactly where legacy systems hurt most:
-
-- dense dependency graphs
-- hidden side effects
-- shared mutable state
-- modules that break three things when you touch one
-
-This project is opinionated about that failure mode.
-
-It does not assume the answer is "rewrite everything."  
-It assumes the safer sequence is:
-
-1. map the current shape
-2. lock behavior
-3. estimate blast radius
-4. show the route to the user
-5. execute only after approval
-6. checkpoint each verified wave with git
-
-### Why It Feels Different
-
-- `Route first, edit second`: no structural edits before an explicit approved route.
-- `Automatic downgrade for high risk`: tangled code falls back to `untangle-first`.
-- `Git is part of execution`: baseline checkpoint, branch strategy, per-wave commits.
-- `Planning artifacts are first-class`: every risky refactor gets a documented handoff package.
-- `Bilingual trigger coverage`: descriptions include both English and Chinese trigger phrases.
-
-### Quick Start
-
-#### Install
-
-Copy both skill folders into your skill directory:
-
-```text
-$CODEX_HOME/skills
-```
-
-Or, if `CODEX_HOME` is unset:
-
-```text
-~/.codex/skills
-```
-
-You can also use the bundled installer:
-
-```text
-python scripts/install_skills.py --force
-```
-
-Useful flags:
-
-- `--dest <path>` installs to a custom path
-- `--mode link` creates symlinks instead of copies
-- `--dry-run` previews the destination
-
-#### Run A Full Risky Refactor Flow
-
-```text
-$gsd-legacy-refactor src/auth --goal "split auth orchestration from token storage"
-```
-
-What happens:
-
-1. inspect the target
-2. write `.planning/refactors/<slug>/`
-3. classify risk and choose mode
-4. show the route for approval
-5. execute approved waves
-6. checkpoint progress with git
-
-#### Run A Single Guardrailed Wave
-
-```text
-$refactoring-legacy-code src/reporting/legacy_parser.py
-```
-
-Use this when you already know the boundary and want execution guardrails.
-
-### How It Thinks
-
-The suite uses two execution modes:
-
-| Mode | Use when |
-|------|----------|
-| `untangle-first` | Risk is high, behavior is fuzzy, coupling is dense, or tests are weak |
-| `refactor-wave` | Boundary is small, callers are known, and verification is credible |
-
-It always prefers:
-
-- one hotspot per wave
-- stable external behavior
-- compatibility seams over blanket rewrites
-- verified progress over heroic big-bang changes
-
-### Artifact Output
-
-`$gsd-legacy-refactor` writes:
-
-```text
-.planning/refactors/<slug>/
-  01-CONTEXT.md
-  02-RISK-MAP.md
-  03-SAFETY-NET.md
-  04-WAVE-PLAN.md
-  05-VERIFY.md
-  06-HANDOFF.md
-  07-EXECUTION-LOG.md
-```
-
-The execution skill always emits these decisions before structural edits:
-
-```text
-Risk Level: high
-Mode: untangle-first
-Current State Map: callers, dependencies, side effects
-Safety Net: existing tests + missing characterization coverage
-Safe Boundary: adapter seam around token store
-Verification Gate: targeted tests + smoke checks + rollback point
-```
-
-### Repo Layout
-
-```text
-skills/
-  refactoring-legacy-code/
-    SKILL.md
-    agents/openai.yaml
-    references/
-  gsd-legacy-refactor/
-    SKILL.md
-    agents/openai.yaml
-    workflows/legacy-refactor.md
-    references/artifact-contract.md
-    templates/
-scripts/
-  install_skills.py
-docs/
-  assets/social-preview-zh.png
-  demo-cases.md
-  github-launch.md
-```
-
-### Docs
-
-- [Demo cases](docs/demo-cases.md)
-- [GitHub launch kit](docs/github-launch.md)
-- [License](LICENSE)
-
-### What This Is Not
-
-- not a one-click monolith rewrite button
-- not a generic cleanup prompt
-- not for tiny isolated bug fixes
-- not a promise that AI can skip tests, verification, or git hygiene
-
-### Roadmap
-
-- add real demo runs on TypeScript and Python repos
-- add forward-test prompts and expected artifacts
-- add release packaging for easier sharing
-- add benchmark comparisons against naive refactor prompts
-
-### Contributing
-
-Issues and PRs are welcome, especially for:
-
-- real legacy-code case studies
-- safer wave-planning heuristics
-- better trigger descriptions
-- install and packaging improvements
-- public demo repos
-
-## 中文
-
-### 这是什么
+## 这是什么
 
 `屎山重构.skill` 是一套双层 skill：
 
@@ -218,7 +29,7 @@ Issues and PRs are welcome, especially for:
 
 这个 README 的组织方式参考了高 star skill / tooling 项目常见的首页模式，比如 [anthropics/skills](https://github.com/anthropics/skills) 和 [daymade/claude-code-skills](https://github.com/daymade/claude-code-skills)：先讲价值，再给安装和上手，再落到更细的说明。
 
-### 为什么做它
+## 为什么做它
 
 大部分 AI 重构工具最容易翻车的地方，恰恰就是遗留系统最痛的地方：
 
@@ -238,7 +49,7 @@ Issues and PRs are welcome, especially for:
 5. 确认后再执行
 6. 每个验证通过的波次都用 git checkpoint 固化
 
-### 它和普通重构提示词有什么不同
+## 它和普通重构提示词有什么不同
 
 - `先路线，后改代码`：没有明确批准前，不允许做结构性修改。
 - `高风险自动降级`：耦合太重时自动切到 `untangle-first`。
@@ -246,9 +57,9 @@ Issues and PRs are welcome, especially for:
 - `规划工件是第一公民`：每次高风险重构都要留下可交接的 `.planning` 包。
 - `中英双语触发词`：英文和中文场景都更容易被 skill 发现。
 
-### 快速开始
+## 快速开始
 
-#### 安装
+### 安装
 
 把两个 skill 文件夹复制到你的 skill 目录：
 
@@ -274,7 +85,7 @@ python scripts/install_skills.py --force
 - `--mode link` 用软链接代替复制
 - `--dry-run` 只预览不写入
 
-#### 跑完整高风险重构流程
+### 跑完整高风险重构流程
 
 ```text
 $gsd-legacy-refactor src/auth --goal "split auth orchestration from token storage"
@@ -289,7 +100,7 @@ $gsd-legacy-refactor src/auth --goal "split auth orchestration from token storag
 5. 执行已批准的波次
 6. 用 git 做 checkpoint
 
-#### 直接执行单个受保护波次
+### 直接执行单个受保护波次
 
 ```text
 $refactoring-legacy-code src/reporting/legacy_parser.py
@@ -297,7 +108,7 @@ $refactoring-legacy-code src/reporting/legacy_parser.py
 
 适合你已经知道边界，只想要执行护栏的时候。
 
-### 它的思考方式
+## 它的思考方式
 
 整个 suite 只允许两种模式：
 
@@ -313,7 +124,7 @@ $refactoring-legacy-code src/reporting/legacy_parser.py
 - 先加兼容层再动内部结构
 - 先要可验证进展，不要英雄式大改
 
-### 产物输出
+## 产物输出
 
 `$gsd-legacy-refactor` 会写出：
 
@@ -339,7 +150,7 @@ Safe Boundary: adapter seam around token store
 Verification Gate: targeted tests + smoke checks + rollback point
 ```
 
-### 仓库结构
+## 仓库结构
 
 ```text
 skills/
@@ -361,27 +172,28 @@ docs/
   github-launch.md
 ```
 
-### 相关文档
+## 相关文档
 
 - [Demo 用例](docs/demo-cases.md)
 - [GitHub 发布素材](docs/github-launch.md)
+- [英文 README](README.en.md)
 - [许可证](LICENSE)
 
-### 它不是什么
+## 它不是什么
 
 - 不是一键重写单体系统的按钮
 - 不是泛泛的代码整理提示词
 - 不是给小型独立 bugfix 用的
 - 不是“AI 可以跳过测试和验证”的借口
 
-### 路线图
+## 路线图
 
 - 增加 TypeScript 和 Python 的真实 demo
 - 增加 forward-test prompts 和期望产物
 - 增加更方便的 release packaging
 - 增加和 naive refactor prompt 的对比 benchmark
 
-### 贡献
+## 贡献
 
 欢迎 issue 和 PR，尤其是：
 
