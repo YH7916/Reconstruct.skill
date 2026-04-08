@@ -5,10 +5,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Route--First-Approval%20Before%20Edits-0F766E?style=for-the-badge" alt="Route-First" />
-  <img src="https://img.shields.io/badge/Multi--Platform-Codex%20%7C%20Claude%20%7C%20Agents-1D4ED8?style=for-the-badge" alt="Multi-Platform" />
-  <img src="https://img.shields.io/badge/Git%20Checkpoints-Per--Wave%20Safety-F59E0B?style=for-the-badge" alt="Git Checkpoints" />
-  <img src="https://img.shields.io/badge/Planning%20Artifacts-.planning%20First-7C3AED?style=for-the-badge" alt="Planning Artifacts" />
+  <img src="https://img.shields.io/badge/Route--First-Approval%20Before%20Edits-0F766E?style=flat-square" alt="Route-First" />
+  <img src="https://img.shields.io/badge/Multi--Platform-Codex%20%7C%20Claude%20%7C%20Agents-1D4ED8?style=flat-square" alt="Multi-Platform" />
+  <img src="https://img.shields.io/badge/Git%20Checkpoints-Per--Wave%20Safety-F59E0B?style=flat-square" alt="Git Checkpoints" />
+  <img src="https://img.shields.io/badge/Planning%20Artifacts-.planning%20First-7C3AED?style=flat-square" alt="Planning Artifacts" />
 </p>
 
 <p align="center">
